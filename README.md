@@ -11,14 +11,14 @@ cd TwitchVodArchiver
 pip install -r requirements.txt
 ia configure
 ```
-### TwitchDownloader
+#### TwitchDownloader
 Download [TwitchDownloader](https://github.com/lay295/TwitchDownloader) and place in same directory as main.py
 
-### Start
+#### Start
 ```
 python main.py "username"
 ```
-### Seperate usernames with commas to archive multiple streamers
+#### Seperate usernames with commas to archive multiple streamers
 ```
 python main.py "username,username2,username3"
 ```
