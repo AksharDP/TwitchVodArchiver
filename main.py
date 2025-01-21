@@ -1,8 +1,7 @@
 import os
 import subprocess
 import sys
-import time
-from time import localtime, strftime
+from time import localtime, strftime, gmtime
 import yt_dlp
 from internetarchive import get_item, upload
 
@@ -129,7 +128,7 @@ def main():
                 "creator": vod_info["uploader_id"],
                 "description": "\n".join(
                     [
-                        f"{time.strftime('%H:%M:%S', time.gmtime(chapter['start_time']))} - {chapter['title']}"
+                        f"{strftime('%H:%M:%S', gmtime(chapter['start_time']))} - {chapter['title']}"
                         for chapter in vod_info["chapters"]
                     ]
                 ),
