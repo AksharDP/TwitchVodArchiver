@@ -1,0 +1,2 @@
+internetarchive==5.2.0
+yt_dlp==2025.1.15
