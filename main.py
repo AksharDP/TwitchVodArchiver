@@ -138,7 +138,7 @@ def main():
             }
             files = [livestream_file, chat_file]
             print("Uploading...")
-            r = upload(identifier, files=files, metadata=md)
+            r = upload(identifier, files=files, metadata=md, request_kwargs={"timeout": 600})
             if r[0].status_code == 200:
                 print(
                     f"Successfully uploaded {vod['id']}. URL: https://www.twitch.tv/videos/{vod['id']}. Internet Archive URL: https://archive.org/details/{identifier}"
