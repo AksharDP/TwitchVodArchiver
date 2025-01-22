@@ -78,7 +78,7 @@ def main():
                     os.remove(f.name)
 
             print("Downloading Chat...")
-            chat_file = f"{temp_dir}/{vod_id}.json"
+            chat_file = os.path.join(temp_dir, f"{vod_id}.json")
             subprocess.run(
                 [
                     f"{twitch_downloader_cli}",
@@ -102,7 +102,7 @@ def main():
             chat_file = chat_file + ".gz"
 
             print("Downloading Vod...")
-            livestream_file = f"{temp_dir}/{vod_id}.mp4"
+            livestream_file = os.path.join(temp_dir, f"{vod_id}.mp4")
             yt_opts = {
                 "format": "best",
                 "outtmpl": livestream_file,
