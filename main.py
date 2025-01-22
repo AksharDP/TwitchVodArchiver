@@ -74,7 +74,7 @@ def main():
             )
             files = os.listdir(temp_dir)
             for file in files:
-                os.remove(file)
+                os.remove(os.path.join(temp_dir, file))
 
             print("Downloading Chat...")
             chat_file = os.path.join(temp_dir, f"{vod_id}.json")
