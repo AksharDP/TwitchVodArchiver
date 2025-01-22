@@ -90,7 +90,7 @@ def main():
                     "--ffz=True",
                     "--stv=true",
                     "-o",
-                    f"{temp_dir}/chat.json",
+                    chat_file,
                     "--compression",
                     "Gzip",
                     "--banner",
