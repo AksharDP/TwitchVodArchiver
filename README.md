@@ -9,6 +9,7 @@ A simple program to archive Twitch VODs with chat to archive.org for preservatio
 - Uploads to Internet Archive automatically
 - Supports archiving multiple streamers
 - Includes chapter information in metadata
+- Download sub-only vods (Only channels in which you are subscribed to)
 
 ## 📋 Requirements
 
@@ -31,6 +32,11 @@ A simple program to archive Twitch VODs with chat to archive.org for preservatio
     ia configure
     ```
 4. Download [TwitchDownloader](https://github.com/lay295/TwitchDownloader) (CLI version) and place the executable in the same directory as main.py.
+
+### Cookie Setup (Optional)
+- Create a `cookies.txt` file in the same directory as main.py
+- Export your Twitch cookies in Netscape format
+- This is required to download subscriber-only VODs or access age-restricted content
 
 ## 🚀 Usage
 ***Archive a single streamer:***
