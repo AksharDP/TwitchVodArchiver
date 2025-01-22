@@ -31,6 +31,7 @@ def check_identifier_exists(identifier):
 def main():
     current_dir = os.getcwd()
     streamers = sys.argv[1].split(",")
+    cookies = None
 
     files = os.listdir(current_dir)
     if not any("TwitchDownloaderCLI" in file for file in files):
@@ -43,6 +44,12 @@ def main():
             break
     if not "ffmpeg" in os.environ:
         subprocess.run(f"{twitch_downloader_cli} ffmpeg -d")
+
+    if any("cookies" in file for file in files):
+        for file in files:
+            if "cookies" in file:
+                cookies = file
+                break
 
     temp_dir = os.path.join(current_dir, "data")
     if not os.path.exists(temp_dir):
@@ -109,6 +116,9 @@ def main():
                 "noplaylist": True,
                 "retries": 10,
             }
+            if cookies is not None:
+                yt_opts["cookiefile"] = cookies
+
             try:
                 with yt_dlp.YoutubeDL(yt_opts) as ydl:
                     ydl.download([vod_info["url"]])
