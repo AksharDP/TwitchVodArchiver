@@ -36,7 +36,7 @@ A simple program to archive Twitch VODs with chat to archive.org for preservatio
 ### Cookie Setup (Optional)
 - Create a `cookies.txt` file in the same directory as main.py
 - Export your Twitch cookies in Netscape format
-- This is required to download subscriber-only VODs or access age-restricted content
+- This is required to download subscriber-only VODs
 
 ## 🚀 Usage
 ***Archive a single streamer:***
