@@ -5,24 +5,21 @@ from time import localtime, strftime, gmtime
 import yt_dlp
 from internetarchive import get_item, upload
 
-def get_vods(username: str, cookies: str) -> list:
+
+def get_twitch_info(link: str, cookies: str) -> dict:
     ydl = yt_dlp.YoutubeDL({"extract_flat": "in_playlist", "quiet": True})
     if cookies is not None:
         ydl.params["cookiefile"] = cookies
-    result = ydl.extract_info(
-        f"https://www.twitch.tv/{username}/videos", download=False
-    )
+    result = ydl.extract_info(link, download=False)
+    return result
+
+def get_vods(username: str, cookies: str) -> list:
+    link = f"https://www.twitch.tv/{username}/videos"
+    result = get_twitch_info(link, cookies)
     all_videos = []
     for entry in result["entries"]:
         all_videos.append(entry)
     return all_videos
-
-def get_vod_info(vod_link: str, cookies: str) -> dict:
-    ydl = yt_dlp.YoutubeDL({"extract_flat": "in_playlist"})
-    if cookies is not None:
-        ydl.params["cookiefile"] = cookies
-    result = ydl.extract_info(vod_link, download=False)
-    return result
 
 def check_identifier_exists(identifier):
     try:
@@ -71,7 +68,7 @@ def main():
                 continue
 
             print("\t Getting vod info...")
-            vod_info = get_vod_info(vod["url"], cookies)
+            vod_info = get_twitch_info(vod["url"], cookies)
             if vod is None:
                 print("Failed to get vod info")
                 continue
