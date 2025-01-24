@@ -33,18 +33,19 @@ def main():
     current_dir = os.getcwd()
     streamers = sys.argv[1].split(",")
     cookies = None
+    twitch_downloader_cli = None
 
     files = os.listdir(current_dir)
     if not any("TwitchDownloaderCLI" in file for file in files):
         print("TwitchDownloaderCLI not found")
         sys.exit(1)
-    twitch_downloader_cli = ""
+    
     for file in files:
         if "TwitchDownloaderCLI" in file:
-            twitch_downloader_cli = file
+            twitch_downloader_cli = os.path.abspath(os.path.join(current_dir, file))
             break
     if not "ffmpeg" in os.environ:
-        subprocess.run(f"{twitch_downloader_cli} ffmpeg -d")
+        subprocess.run([twitch_downloader_cli, "ffmpeg", "-d"])
 
     if any("cookies" in file for file in files):
         for file in files:
@@ -78,7 +79,7 @@ def main():
                 continue
 
             subprocess.run(
-                [f"{current_dir}/TwitchDownloaderCLI.exe", "cache", "--force-clear"]
+                [twitch_downloader_cli, "cache", "--force-clear"]
             )
             files = os.listdir(temp_dir)
             for file in files:
