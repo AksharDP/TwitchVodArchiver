@@ -92,25 +92,30 @@ def main():
 
             print("Downloading Chat...")
             chat_file = os.path.join(temp_dir, f"{vod_id}.json")
-            subprocess.run([
-                    f"{twitch_downloader_cli}",
-                    "chatdownload",
-                    "--id",
-                    vod_id,
-                    "--embed-images",
-                    "--bttv=true",
-                    "--ffz=True",
-                    "--stv=true",
-                    "-o",
-                    chat_file,
-                    "--compression",
-                    "Gzip",
-                    "--banner",
-                    "false",
-                    "-t",
-                    "2",
-            ])
-            chat_file = chat_file + ".gz"
+            try:
+                subprocess.run([
+                        f"{twitch_downloader_cli}",
+                        "chatdownload",
+                        "--id",
+                        vod_id,
+                        "--embed-images",
+                        "--bttv=true",
+                        "--ffz=True",
+                        "--stv=true",
+                        "-o",
+                        chat_file,
+                        "--compression",
+                        "Gzip",
+                        "--banner",
+                        "false",
+                        "-t",
+                        "2",
+                ])
+                chat_file = chat_file + ".gz"
+            except Exception as e:
+                print(f"Failed to download chat: {e}")
+                clear_dir(temp_dir)
+                continue
 
             print("Downloading Vod...")
             livestream_file = os.path.join(temp_dir, f"{vod_id}.mp4")
