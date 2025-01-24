@@ -13,6 +13,7 @@ def get_twitch_info(link: str, cookies: str) -> dict:
     result = ydl.extract_info(link, download=False)
     return result
 
+
 def get_vods(username: str, cookies: str) -> list:
     link = f"https://www.twitch.tv/{username}/videos"
     result = get_twitch_info(link, cookies)
@@ -21,6 +22,7 @@ def get_vods(username: str, cookies: str) -> list:
         all_videos.append(entry)
     return all_videos
 
+
 def check_identifier_exists(identifier):
     try:
         item = get_item(identifier)
@@ -28,6 +30,7 @@ def check_identifier_exists(identifier):
     except Exception as e:
         print(f"Error: {e}")
         return False
+
 
 def main():
     current_dir = os.getcwd()
@@ -39,7 +42,7 @@ def main():
     if not any("TwitchDownloaderCLI" in file for file in files):
         print("TwitchDownloaderCLI not found")
         sys.exit(1)
-    
+
     for file in files:
         if "TwitchDownloaderCLI" in file:
             twitch_downloader_cli = os.path.abspath(os.path.join(current_dir, file))
@@ -78,17 +81,14 @@ def main():
                 print("Skipping vod since it is live")
                 continue
 
-            subprocess.run(
-                [twitch_downloader_cli, "cache", "--force-clear"]
-            )
+            subprocess.run([twitch_downloader_cli, "cache", "--force-clear"])
             files = os.listdir(temp_dir)
             for file in files:
                 os.remove(os.path.join(temp_dir, file))
 
             print("Downloading Chat...")
             chat_file = os.path.join(temp_dir, f"{vod_id}.json")
-            subprocess.run(
-                [
+            subprocess.run([
                     f"{twitch_downloader_cli}",
                     "chatdownload",
                     "--id",
@@ -105,8 +105,7 @@ def main():
                     "false",
                     "-t",
                     "2",
-                ]
-            )
+            ])
             chat_file = chat_file + ".gz"
 
             print("Downloading Vod...")
@@ -150,7 +149,9 @@ def main():
             }
             files = [livestream_file, chat_file]
             print("Uploading...")
-            r = upload(identifier, files=files, metadata=md, request_kwargs={"timeout": 600})
+            r = upload(
+                identifier, files=files, metadata=md, request_kwargs={"timeout": 600}
+            )
             if r[0].status_code == 200:
                 print(
                     f"Successfully uploaded {vod['id']}. URL: https://www.twitch.tv/videos/{vod['id']}. Internet Archive URL: https://archive.org/details/{identifier}"
