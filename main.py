@@ -162,11 +162,11 @@ def main():
             )
             if r[0].status_code == 200:
                 print(
-                    f"Successfully uploaded {vod['id']}. URL: https://www.twitch.tv/videos/{vod['id']}. Internet Archive URL: https://archive.org/details/{identifier}"
+                    f"Successfully uploaded {vod_id}. URL: https://www.twitch.tv/videos/{vod_id}. Internet Archive URL: https://archive.org/details/{identifier}"
                 )
             else:
                 print(
-                    f"Failed to upload {vod['id']}. URL: https://www.twitch.tv/videos/{vod['id']}"
+                    f"Failed to upload {vod_id}. URL: https://www.twitch.tv/videos/{vod_id}"
                 )
             for file in files:
                 os.remove(file)
