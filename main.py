@@ -31,6 +31,10 @@ def check_identifier_exists(identifier):
         print(f"Error: {e}")
         return False
 
+def clear_dir(temp_dir: str) -> None:
+    files = os.listdir(temp_dir)
+    for file in files:
+        os.remove(os.path.join(temp_dir, file))
 
 def main():
     current_dir = os.getcwd()
@@ -123,10 +127,14 @@ def main():
             try:
                 with yt_dlp.YoutubeDL(yt_opts) as ydl:
                     ydl.download([vod_info["url"]])
+            except yt_dlp.utils.DownloadError as e:
+                clear_dir(temp_dir)
+                print(
+                    f"Failed to download vod {vod['id']}. URL: https://www.twitch.tv/videos/{vod['id']}"
+                )
+                continue
             except Exception as e:
-                files = os.listdir(temp_dir)
-                for file in files:
-                    os.remove(file)
+                clear_dir(temp_dir)
                 print(
                     f"Failed to download vod {vod['id']}. URL: https://www.twitch.tv/videos/{vod['id']}"
                 )
