@@ -33,6 +33,11 @@ A simple program to archive Twitch VODs with chat to archive.org for preservatio
     ```
 4. Download [TwitchDownloader](https://github.com/lay295/TwitchDownloader) (CLI version) and place the executable in the same directory as main.py.
 
+5. Gives permissions if you are using linux
+    ```
+    chmod a+x TwitchDownloaderCLI
+    ```
+
 ### Cookie Setup (Optional)
 - Create a `cookies.txt` file in the same directory as main.py
 - Export your Twitch cookies in Netscape format
