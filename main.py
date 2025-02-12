@@ -92,7 +92,9 @@ def main():
 
             print("Downloading Chat...")
             chat_file = os.path.join(temp_dir, f"{vod_id}.json")
-            try:
+            compressed_chat_file = chat_file + ".gz"
+            retries = 0
+            while not os.path.exists(compressed_chat_file) and retries < 5:
                 subprocess.run([
                         f"{twitch_downloader_cli}",
                         "chatdownload",
@@ -111,38 +113,38 @@ def main():
                         "-t",
                         "2",
                 ])
-                chat_file = chat_file + ".gz"
-            except Exception as e:
-                print(f"Failed to download chat: {e}")
-                clear_dir(temp_dir)
+                retries += 1
+            
+            if not os.path.exists(compressed_chat_file) and retries >= 5:
+                print(f"Failed to download chat for vod {vod_id}")
                 continue
 
             print("Downloading Vod...")
             livestream_file = os.path.join(temp_dir, f"{vod_id}.mp4")
-            yt_opts = {
-                "format": "best",
-                "outtmpl": livestream_file,
-                "tmpdir": temp_dir,
-                "noplaylist": True,
-                "retries": 10,
-            }
-            if cookies is not None:
-                yt_opts["cookiefile"] = cookies
+            video_retry = 0
+            while not os.path.exists(livestream_file) and video_retry < 5:
+                yt_opts = {
+                    "format": "best",
+                    "outtmpl": livestream_file,
+                    "tmpdir": temp_dir,
+                    "noplaylist": True,
+                    "retries": 10,
+                }
+                if cookies is not None:
+                    yt_opts["cookiefile"] = cookies
 
-            try:
-                with yt_dlp.YoutubeDL(yt_opts) as ydl:
-                    ydl.download([vod_info["url"]])
-            except yt_dlp.utils.DownloadError as e:
-                clear_dir(temp_dir)
-                print(
-                    f"Failed to download vod {vod['id']}. URL: https://www.twitch.tv/videos/{vod['id']}"
-                )
-                continue
-            except Exception as e:
-                clear_dir(temp_dir)
-                print(
-                    f"Failed to download vod {vod['id']}. URL: https://www.twitch.tv/videos/{vod['id']}"
-                )
+                try:
+                    with yt_dlp.YoutubeDL(yt_opts) as ydl:
+                        ydl.download([vod_info["url"]])
+                    break
+                except Exception as e:
+                    print(
+                        f"Failed to download vod {vod['id']}. URL: https://www.twitch.tv/videos/{vod['id']}"
+                    )
+                    pass
+            
+            if not os.path.exists(livestream_file) and video_retry >= 5:
+                print(f"Failed to download vod {vod_id}")
                 continue
 
             md = {
