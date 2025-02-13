@@ -162,7 +162,6 @@ def main():
                 "language": "eng",
                 "game": list(set(chapter["title"] for chapter in vod_info["chapters"])),
             }
-            files = [livestream_file, compressed_chat_file]
             print("Uploading...")
             r = upload(
                 identifier, files=[livestream_file, compressed_chat_file], metadata=md, request_kwargs={"timeout": 600}
