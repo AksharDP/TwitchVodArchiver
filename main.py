@@ -67,7 +67,7 @@ def main():
     for streamer in streamers:
         print("Getting vods of " + streamer)
         vods = get_vods(streamer, cookies)
-        for vod in vods:
+        for vod in reversed(vods):
             vod_id = vod["id"][1:]
             print(f"Checking if vods exists : {vod_id}")
             identifier = f"TwitchVod-{vod_id}"
