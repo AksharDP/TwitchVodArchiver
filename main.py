@@ -210,7 +210,7 @@ def main(streamers: str, verify_metadata: bool) -> None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Twitch Archiver')
-    parser.add_argument('input_string', help='Streamers to archive, example: steamer1 or streamer1,streamer2', type=str, required=True)
+    parser.add_argument('input_string', help='Streamers to archive, example: steamer1 or streamer1,streamer2', type=str)
     parser.add_argument('-vm', '--verify-metadata', action='store_true', help='Verifies metadata of the given identifier', required=False)
     args = parser.parse_args()
     main(args.input_string, args.verify_metadata)
