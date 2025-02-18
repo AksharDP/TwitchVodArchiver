@@ -1,7 +1,7 @@
 import os
 import subprocess
 import sys
-from time import localtime, strftime, gmtime
+from time import strftime, gmtime, strptime
 import yt_dlp
 from internetarchive import get_item, upload
 
@@ -67,7 +67,7 @@ def main():
     for streamer in streamers:
         print("Getting vods of " + streamer)
         vods = get_vods(streamer, cookies)
-        for vod in reversed(vods):
+        for vod in vods:
             vod_id = vod["id"][1:]
             print(f"Checking if vods exists : {vod_id}")
             identifier = f"TwitchVod-{vod_id}"
@@ -157,11 +157,12 @@ def main():
                         for chapter in vod_info["chapters"]
                     ]
                 ),
-                "date": strftime("%Y-%m-%d", localtime(vod_info["epoch"])),
+                "date": strftime("%Y-%m-%d", strptime(vod_info["upload_date"], "%Y%m%d")),
                 "subject": ["Twitch", "Twitch Vod", "Twitch Chat"],
                 "language": "eng",
                 "game": list(set(chapter["title"] for chapter in vod_info["chapters"])),
             }
+            files = [livestream_file, compressed_chat_file]
             print("Uploading...")
             r = upload(
                 identifier, files=[livestream_file, compressed_chat_file], metadata=md, request_kwargs={"timeout": 600}
