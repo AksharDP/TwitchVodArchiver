@@ -4,6 +4,8 @@ import sys
 from time import strftime, gmtime, strptime
 import yt_dlp
 from internetarchive import get_item, upload
+import argparse
+
 
 
 def get_twitch_info(link: str, cookies: str) -> dict:
@@ -30,15 +32,23 @@ def check_identifier_exists(identifier):
     except Exception as e:
         print(f"Error: {e}")
         return False
+    
+def get_metadata(identifier) -> dict:
+    try:
+        item = get_item(identifier)
+        return item.metadata
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
 
 def clear_dir(temp_dir: str) -> None:
     files = os.listdir(temp_dir)
     for file in files:
         os.remove(os.path.join(temp_dir, file))
 
-def main():
+def main(streamers: str, verify_metadata: bool) -> None:
     current_dir = os.getcwd()
-    streamers = sys.argv[1].split(",")
+    streamers = streamers.split(",")
     cookies = None
     twitch_downloader_cli = None
 
@@ -68,18 +78,37 @@ def main():
         print("Getting vods of " + streamer)
         vods = get_vods(streamer, cookies)
         for vod in vods:
+            print("\t Getting vod info...")
+            vod_info = get_twitch_info(vod["url"], cookies)
+            if vod_info is None:
+                print("Failed to get vod info")
+                continue
+
             vod_id = vod["id"][1:]
             print(f"Checking if vods exists : {vod_id}")
             identifier = f"TwitchVod-{vod_id}"
             if check_identifier_exists(identifier):
                 print("Skipping vod since it already exists in internet archive")
-                continue
-
-            print("\t Getting vod info...")
-            vod_info = get_twitch_info(vod["url"], cookies)
-            if vod is None:
-                print("Failed to get vod info")
-                continue
+                if verify_metadata:
+                    print("Verifying metadata...")
+                    metadata = get_metadata(identifier)
+                    metadata_should_be = {
+                        "title": vod_info["fulltitle"],
+                        "creator": vod_info["uploader_id"],
+                        "date": strftime("%Y-%m-%d", strptime(vod_info["upload_date"], "%Y%m%d")),
+                        "description": "\n".join([f"{strftime('%H:%M:%S', gmtime(chapter['start_time']))} - {chapter['title']}" for chapter in vod_info["chapters"]]),
+                        "game": list(set(chapter["title"] for chapter in vod_info["chapters"])),
+                        "language": "eng",
+                        "mediatype": "movies",
+                        "subject": ["Twitch", "Twitch Vod", "Twitch Chat"]
+                    }
+                    if any(metadata.get(key) != value for key, value in metadata_should_be.items()):
+                        print("Metadata mismatch, updating...")
+                        r = get_item(identifier).modify_metadata(metadata=metadata_should_be)
+                        if r.status_code != 200:
+                            print(f"Failed to update metadata: {r.status_code}")
+                    print("Metadata verified")
+                continue            
 
             if vod_info["is_live"] == True:
                 print("Skipping vod since it is live")
@@ -180,4 +209,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description='Twitch Archiver')
+    parser.add_argument('input_string', help='Streamers to archive, example: steamer1 or streamer1,streamer2', type=str, required=True)
+    parser.add_argument('-vm', '--verify-metadata', action='store_true', help='Verifies metadata of the given identifier', required=False)
+    args = parser.parse_args()
+    main(args.input_string, args.verify_metadata)
