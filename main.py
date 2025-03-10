@@ -8,12 +8,15 @@ import argparse
 
 
 
-def get_twitch_info(link: str, cookies: str) -> dict:
-    ydl = yt_dlp.YoutubeDL({"extract_flat": "in_playlist", "quiet": True})
-    if cookies is not None:
-        ydl.params["cookiefile"] = cookies
-    result = ydl.extract_info(link, download=False)
-    return result
+def get_twitch_info(link, cookies):
+    ydl_opts = {'cookiefile': cookies, 'quiet': True}
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        try:
+            result = ydl.extract_info(link, download=False)
+            return result
+        except yt_dlp.utils.DownloadError as e:
+            print(f"Skipping VOD {link} due to error: {e}")
+            return None
 
 
 def get_vods(username: str, cookies: str) -> list:
