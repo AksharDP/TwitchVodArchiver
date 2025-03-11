@@ -140,7 +140,7 @@ def main(streamers: str, verify_metadata: bool) -> None:
                         "--banner",
                         "false",
                         "-t",
-                        "2",
+                        "1",
                 ])
                 retries += 1
             
