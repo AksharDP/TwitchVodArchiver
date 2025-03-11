@@ -194,7 +194,8 @@ def main(streamers: str, verify_metadata: bool) -> None:
             files = [livestream_file, compressed_chat_file]
             print("Uploading...")
             r = upload(
-                identifier, files=[livestream_file, compressed_chat_file], metadata=md, request_kwargs={"timeout": 600}
+                identifier, files=[livestream_file, compressed_chat_file], metadata=md, request_kwargs={"timeout": 600, "timeout": 9001},
+                retries=9001,
             )
             if r[0].status_code == 200:
                 print(
