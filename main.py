@@ -9,7 +9,15 @@ import argparse
 
 
 def get_twitch_info(link: str, cookies: str) -> dict:
-    ydl = yt_dlp.YoutubeDL({"extract_flat": "in_playlist", "quiet": True})
+    ydl = yt_dlp.YoutubeDL({
+        "extract_flat": "in_playlist", 
+        "quiet": True, 
+        "nocheckcertificate": True,
+        "ignoreerrors": True,
+        "no_warnings": True,
+        "socket_timeout": 30,
+        "retries": 10
+    })
     if cookies is not None:
         ydl.params["cookiefile"] = cookies
     result = ydl.extract_info(link, download=False)
@@ -140,7 +148,7 @@ def main(streamers: str, verify_metadata: bool) -> None:
                         "--banner",
                         "false",
                         "-t",
-                        "2",
+                        "1",
                 ])
                 retries += 1
             
